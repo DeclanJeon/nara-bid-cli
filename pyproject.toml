@@ -1,0 +1,48 @@
+[project]
+name = "nara-bid-cli"
+version = "0.1.0"
+description = "나라장터 입찰공고 키워드 검색 CLI"
+requires-python = ">=3.11"
+dependencies = ["typer>=0.16,<1", "rich>=13,<15", "httpx2[http2,brotli,zstd]>=2,<3", "pydantic>=2,<3"]
+
+[project.scripts]
+nara = "nara.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nara"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-config --strict-markers"
+
+[tool.basedpyright]
+typeCheckingMode = "all"
+pythonVersion = "3.11"
+include = ["src"]
+# Exhaustive match guards intentionally bind Never in the default case.
+reportUnnecessaryComparison = "none"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D203", "D213", "COM812", "ISC001", "D100", "D104", "D107", "D101", "D102", "D103", "D105", "D106", "TRY003", "EM101", "EM102", "PLR2004", "CPY001", "TRY301"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ARG", "D", "SLF001", "INP001", "RUF001", "FBT001"]
+
+# Upstream JSON field names are preserved only at the API boundary.
+[tool.ruff.lint.extend-per-file-ignores]
+"src/nara/models.py" = ["N815"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
